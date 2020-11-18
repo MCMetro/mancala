@@ -24,6 +24,7 @@ public class MancalaListener implements HttpSessionListener {
      * @see HttpSessionListener#sessionCreated(HttpSessionEvent)
      */
     public void sessionCreated(HttpSessionEvent se)  { 
+    	System.out.println("Beginning of the Listener...");
         se.getSession().setAttribute("game", new Game()); 
     }
 
