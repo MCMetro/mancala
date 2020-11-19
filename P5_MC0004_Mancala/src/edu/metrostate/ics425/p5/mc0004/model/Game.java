@@ -84,6 +84,7 @@ public class Game implements Serializable {
 	}
 
 	public void setMove(int pNum) {
+		// TODO: validate which player's move it is and only allow that player's pockets to be moved.
 		var numStones = gameBoard[pNum];
 		var nextPocket = nextPocket(pNum);
 		while (numStones > 0) {
@@ -106,9 +107,15 @@ public class Game implements Serializable {
 			} else {
 				gameBoard[nextPocket]++;
 			}
+			// if the last stone falls in an empty pocket on your side, add the stones in that pocket to the final pocket.
+			// Add a check to ensure the last stone was on the proper side.
 			if (numStones == 1) {
-				//TODO if the last stone falls in an empty pocket on your side, add the stones in that pocket to the final pocket.
 				int oppositePocket = getOppositePocket(nextPocket);
+				if (gameBoard[nextPocket] == 1) {
+					gameBoard[nextPocket] = gameBoard[nextPocket] + gameBoard[oppositePocket];
+					gameBoard[oppositePocket] = 0;
+				}
+				System.out.println("Final Pocket Count: " + gameBoard[nextPocket]);
 				System.out.println("Final Pocket: " + nextPocket);
 				System.out.println("Opposite Pocket: " + oppositePocket);
 			}
@@ -142,6 +149,8 @@ public class Game implements Serializable {
 			nextPocket++;
 		}
 		return nextPocket;
+//		return nextPocket == 13 ? 0 : nextPocket++;
+
 	}
 
 	public int getPlayer() {
