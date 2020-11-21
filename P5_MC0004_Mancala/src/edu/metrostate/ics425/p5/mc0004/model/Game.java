@@ -216,24 +216,15 @@ public class Game implements Serializable {
 	 * @return Whether the game is in a won state or not.
 	 */
 	public boolean gameWon() {
-		// TODO: Determine if the game is in a won state - If one side of the board is totally empty.
-		boolean won = false;
-		int j = 8;
-		int win[] = { 0, 0, 0, 0, 0, 0 };
-		int p1Current[] = { 0, 0, 0, 0, 0, 0 };
-		int p2Current[] = { 0, 0, 0, 0, 0, 0 };
-		for (int i = 0; i < 6; i++) {
-			p1Current[i] = gameBoard[i + 1];
-//			System.out.println("p1 array: " + p1Current[i]);
-			p2Current[i] = gameBoard[j];
-//			System.out.println("p2 array: " + p2Current[i]);
-			j++;
+		int p1stones = 0;
+		int p2stones = 0;
+		for (int i = 1; i < 7; i++) {
+			p1stones += gameBoard[i];
 		}
-
-		if (p1Current == win || p2Current == win) {
-			won = true;
+		for (int i = 8; i < 14; i++) {
+			p2stones += gameBoard[i];
 		}
-		return won;
+		return p1stones == 0 || p2stones == 0 ? true : false;
 	}
 
 }
