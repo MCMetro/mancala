@@ -3,6 +3,10 @@ package edu.metrostate.ics425.p5.mc0004.model;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * @author Mux
+ *
+ */
 public class Game implements Serializable {
 
 	/**
@@ -20,6 +24,14 @@ public class Game implements Serializable {
 //	static List<Pocket> gameBoard;
 	private static int[] gameBoard;
 	private int player = 1;
+
+	private enum playerSides {
+		ONE(new int[] { 1, 2, 3, 4, 5, 6 }), TWO(new int[] { 8, 9, 10, 11, 12 });
+
+		playerSides(int[] is) {
+			// TODO Auto-generated constructor stub
+		}
+	}
 
 	public void createGameBoard() {
 //		for (int i = 0; i < NUM_POCKETS; i++) {
@@ -84,55 +96,74 @@ public class Game implements Serializable {
 	}
 
 	public void setMove(int pNum) {
-		// TODO: validate which player's move it is and only allow that player's pockets to be moved.
-		var numStones = gameBoard[pNum];
-		var nextPocket = nextPocket(pNum);
-		while (numStones > 0) {
-			System.out.println("stones left: " + gameBoard[pNum]);
-			System.out.println("next pocket: " + nextPocket);
-			if (nextPocket == 0) {
-				if (player == 1) {
-					gameBoard[nextPocket]++;
-				} else {
-					nextPocket = nextPocket(nextPocket);
-					gameBoard[nextPocket]++;
-				}
-			} else if (nextPocket == 7) {
-				if (player == 2) {
-					gameBoard[nextPocket]++;
-				} else {
-					nextPocket = nextPocket(nextPocket);
-					gameBoard[nextPocket]++;
-				}
-			} else {
-				gameBoard[nextPocket]++;
-			}
-			// if the last stone falls in an empty pocket on your side, add the stones in that pocket to the final pocket.
-			// Add a check to ensure the last stone was on the proper side.
-			if (numStones == 1) {
-				int oppositePocket = getOppositePocket(nextPocket);
-				if (gameBoard[nextPocket] == 1) {
-					gameBoard[nextPocket] = gameBoard[nextPocket] + gameBoard[oppositePocket];
-					gameBoard[oppositePocket] = 0;
-				}
-				System.out.println("Final Pocket Count: " + gameBoard[nextPocket]);
-				System.out.println("Final Pocket: " + nextPocket);
-				System.out.println("Opposite Pocket: " + oppositePocket);
-			}
-			gameBoard[pNum] = gameBoard[pNum] - 1;
-			nextPocket = nextPocket(nextPocket);
-			numStones--;
-		}
-		System.out.println("setMove...");
-		if (player == 1) {
-			player = 2;
+		// TODO: validate which player's move it is and only allow that player's pockets
+		// to be moved.
+		if (isValid(player, pNum) == false) {
+
 		} else {
-			player = 1;
+			var numStones = gameBoard[pNum];
+			var nextPocket = nextPocket(pNum);
+			while (numStones > 0) {
+				System.out.println("stones left: " + gameBoard[pNum]);
+				System.out.println("next pocket: " + nextPocket);
+				if (nextPocket == 0) {
+					if (player == 1) {
+						gameBoard[nextPocket]++;
+					} else {
+						nextPocket = nextPocket(nextPocket);
+						gameBoard[nextPocket]++;
+					}
+				} else if (nextPocket == 7) {
+					if (player == 2) {
+						gameBoard[nextPocket]++;
+					} else {
+						nextPocket = nextPocket(nextPocket);
+						gameBoard[nextPocket]++;
+					}
+				} else {
+					gameBoard[nextPocket]++;
+				}
+				// if the last stone falls in an empty pocket on your side, add the stones in
+				// that pocket to the final pocket.
+				// Add a check to ensure the last stone was on the proper side.
+				if (numStones == 1) {
+					int oppositePocket = getOppositePocket(nextPocket);
+					if (gameBoard[nextPocket] == 1) {
+						gameBoard[nextPocket] = gameBoard[nextPocket] + gameBoard[oppositePocket];
+						gameBoard[oppositePocket] = 0;
+					}
+					System.out.println("Final Pocket Count: " + gameBoard[nextPocket]);
+					System.out.println("Final Pocket: " + nextPocket);
+					System.out.println("Opposite Pocket: " + oppositePocket);
+				}
+				gameBoard[pNum] = gameBoard[pNum] - 1;
+				nextPocket = nextPocket(nextPocket);
+				numStones--;
+			}
+			System.out.println("setMove...");
+			if (player == 1) {
+				player = 2;
+			} else {
+				player = 1;
+			}
 		}
 		System.out.println("Current Player: " + player);
 	}
-	
-	//Discover the pocket opposite a given pocket.
+
+	private boolean isValid(int player, int pocket) {
+		boolean valid = false;
+		if (player == 1 && pocket > 0 && pocket < 7) {
+			valid = true;
+		} else if (player == 2 && pocket > 7 && pocket < 14) {
+			valid = true;
+		}
+		return valid;
+	}
+
+	/**
+	 * @param finalPocket
+	 * @return The pocket exactly opposite the last pocket a stone was placed in
+	 */
 	private int getOppositePocket(int finalPocket) {
 		int oppositePocket = finalPocket;
 		for (int i = 7; i > 0; i--) {
@@ -142,14 +173,13 @@ public class Game implements Serializable {
 		return oppositePocket;
 	}
 
+	/**
+	 * @param nextPocket
+	 * @return The next pocket to move a stone to
+	 */
 	private int nextPocket(int nextPocket) {
-		if (nextPocket == 13) {
-			nextPocket = 0;
-		} else {
-			nextPocket++;
-		}
-		return nextPocket;
-//		return nextPocket == 13 ? 0 : nextPocket++;
+
+		return (nextPocket + 1) % 14;
 
 	}
 
