@@ -26,7 +26,8 @@
 			</tr>
 		</table>
 		<br>
-		Current Player: <c:if test="${game.player == 1 || game.player == 2}">${game.player}</c:if>
+		Current Player: <c:if test="${game.player == 1 || game.player == 2}">${game.player}	</c:if>
+		Current Turn: ${game.turn }
 		<br>
 		<table border="1">
 			

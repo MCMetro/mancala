@@ -24,6 +24,7 @@ public class Game implements Serializable {
 //	static List<Pocket> gameBoard;
 	private static int[] gameBoard;
 	private int player = 1;
+	private int winner = 0;
 
 	public void createGameBoard() {
 //		for (int i = 0; i < NUM_POCKETS; i++) {
@@ -71,8 +72,6 @@ public class Game implements Serializable {
 
 		}
 		player = 1;
-		System.out.println("player: " + player);
-
 	}
 
 	public int[] getGameBoard() {
@@ -89,7 +88,11 @@ public class Game implements Serializable {
 
 	public void setMove(int pNum) {
 		if (gameWon() == true) {
-
+			if (gameBoard[0] > gameBoard[7]) {
+				winner = 1;
+			} else {
+				winner = 2;
+			}
 		} else {
 			if (isValid(player, pNum) == false) {
 
@@ -128,20 +131,21 @@ public class Game implements Serializable {
 								gameBoard[oppositePocket] = 0;
 							}
 						}
-						System.out.println("Final Pocket Count: " + gameBoard[nextPocket]);
+//						System.out.println("Final Pocket Count: " + gameBoard[nextPocket]);
 						System.out.println("Final Pocket: " + nextPocket);
-						System.out.println("Opposite Pocket: " + oppositePocket);
+//						System.out.println("Opposite Pocket: " + oppositePocket);
 					}
 					gameBoard[pNum] = gameBoard[pNum] - 1;
 					nextPocket = nextPocket(nextPocket);
 					numStones--;
 				}
 				System.out.println("setMove...");
-				if (player == 1) {
-					player = 2;
-				} else {
-					player = 1;
-				}
+//				if (player == 1) {
+//					player = 2;
+//				} else {
+//					player = 1;
+//				}
+				player = nextPlayer(player, nextPocket);
 			}
 		}
 		System.out.println("Current Player: " + player);
@@ -162,6 +166,20 @@ public class Game implements Serializable {
 			}
 		}
 		return valid;
+	}
+
+	/**
+	 * @param player
+	 * @param nextPocket
+	 * @return The next player
+	 */
+	private int nextPlayer(int player, int nextPocket) {
+		// TODO: Fix! - If the last stone in a player's move lands in their own Kallah, the player gets to move again. 
+		if ((player == 1 && nextPocket == 0) || (player == 2 && nextPocket == 7)) {
+			return player;
+		} else {
+			return player == 1 ? 2 : 1;
+		}
 	}
 
 	/**
@@ -198,21 +216,21 @@ public class Game implements Serializable {
 	 * @return Whether the game is in a won state or not.
 	 */
 	public boolean gameWon() {
-		// TODO: fix this broken stuff...
+		// TODO: Determine if the game is in a won state - If one side of the board is totally empty.
 		boolean won = false;
 		int j = 8;
 		int win[] = { 0, 0, 0, 0, 0, 0 };
 		int p1Current[] = { 0, 0, 0, 0, 0, 0 };
 		int p2Current[] = { 0, 0, 0, 0, 0, 0 };
 		for (int i = 0; i < 6; i++) {
-			p1Current[i] = gameBoard[i+1];
-			System.out.println("p1 array: " + p1Current[i]);
+			p1Current[i] = gameBoard[i + 1];
+//			System.out.println("p1 array: " + p1Current[i]);
 			p2Current[i] = gameBoard[j];
-			System.out.println("p2 array: " + p2Current[i]);
+//			System.out.println("p2 array: " + p2Current[i]);
 			j++;
 		}
 
-		if (p1Current.equals(win) || p2Current.equals(win)) {
+		if (p1Current == win || p2Current == win) {
 			won = true;
 		}
 		return won;
