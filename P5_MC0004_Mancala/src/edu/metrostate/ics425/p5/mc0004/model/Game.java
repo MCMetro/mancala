@@ -25,14 +25,6 @@ public class Game implements Serializable {
 	private static int[] gameBoard;
 	private int player = 1;
 
-	private enum playerSides {
-		ONE(new int[] { 1, 2, 3, 4, 5, 6 }), TWO(new int[] { 8, 9, 10, 11, 12 });
-
-		playerSides(int[] is) {
-			// TODO Auto-generated constructor stub
-		}
-	}
-
 	public void createGameBoard() {
 //		for (int i = 0; i < NUM_POCKETS; i++) {
 //			if (i >= 0 && i <= 6) {
@@ -96,8 +88,6 @@ public class Game implements Serializable {
 	}
 
 	public void setMove(int pNum) {
-		// TODO: validate which player's move it is and only allow that player's pockets
-		// to be moved.
 		if (gameWon() == true) {
 
 		} else {
