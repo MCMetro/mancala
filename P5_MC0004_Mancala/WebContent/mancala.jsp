@@ -43,7 +43,7 @@
 						</c:if>
 					</c:forEach>
 				</tr>
-			
+			<c:if test="${game.winner != 0 }">Player ${game.winner } wins!</c:if>
 		</table>
 	</form>
 </body>

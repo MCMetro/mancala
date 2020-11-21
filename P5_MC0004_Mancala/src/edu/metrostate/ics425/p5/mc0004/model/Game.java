@@ -15,59 +15,36 @@ public class Game implements Serializable {
 	private static final long serialVersionUID = 20201105001L;
 
 	public Game() {
-
+		
 	}
 
 	private static final int NUM_POCKETS = 14;
 	private int turn;
 	static int startingStones = 4;
-//	static List<Pocket> gameBoard;
 	private static int[] gameBoard;
 	private int player = 1;
 	private int winner = 0;
+	
+
+	public int getWinner() {
+		return winner;
+	}
+
+	public void setWinner(int winner) {
+		this.winner = winner;
+	}
 
 	public void createGameBoard() {
-//		for (int i = 0; i < NUM_POCKETS; i++) {
-//			if (i >= 0 && i <= 6) {
-//				if (i == 0) {
-//					Pocket s1 = new Pocket(startingStones, true, 1);
-//					System.out.println(s1);
-//					gameBoard.add(s1); 
-//				} else {
-//					Pocket p1 = new Pocket(startingStones, false, 1);
-//					gameBoard.add(p1); 
-//				}
-//			} else if (i >= 7 && i <= 14) {
-//				if (i == 7) {
-//					Pocket s2 = new Pocket(startingStones, true, 2);
-//					gameBoard.add(s2); 
-//				} else {
-//					Pocket p1 = new Pocket(startingStones, false, 2);
-//					gameBoard.add(p1); 
-//				}
-//			}
-//			
-//		}
-//		//test printing the gameBoard
-//		System.out.println(gameBoard);
-
+		
 		// This is an attempt I made at making the game board just a simple int array.
 		// Initialization of this on line 21
 
 		gameBoard = new int[NUM_POCKETS];
-		for (int i = 0; i < NUM_POCKETS; i++) {
-			if (i >= 0 && i <= 6) {
-				if (i == 0) {
-					gameBoard[i] = 0;
-				} else {
-					gameBoard[i] = startingStones;
-				}
-			} else if (i >= 7 && i <= 14) {
-				if (i == 7) {
-					gameBoard[i] = 0;
-				} else {
-					gameBoard[i] = startingStones;
-				}
+		for (int i = 0; i < gameBoard.length; i++) {
+			if (i == 0 || i == 7) {
+				gameBoard[i] = 0;
+			} else {
+				gameBoard[i] = startingStones;
 			}
 
 		}
@@ -87,11 +64,14 @@ public class Game implements Serializable {
 	}
 
 	public void setMove(int pNum) {
+		System.out.println(gameWon());
+		System.out.println("value of w: " + winner);
 		if (gameWon() == true) {
+			System.out.println("Begin gameWon If Statement...");
 			if (gameBoard[0] > gameBoard[7]) {
-				winner = 1;
+				setWinner(2);
 			} else {
-				winner = 2;
+				setWinner(1);
 			}
 		} else {
 			if (isValid(player, pNum) == false) {
@@ -102,14 +82,14 @@ public class Game implements Serializable {
 				while (numStones > 0) {
 					System.out.println("stones left: " + gameBoard[pNum]);
 					System.out.println("next pocket: " + nextPocket);
-					if (nextPocket == 0) {
+					if (nextPocket == 7) {
 						if (player == 1) {
 							gameBoard[nextPocket]++;
 						} else {
 							nextPocket = nextPocket(nextPocket);
 							gameBoard[nextPocket]++;
 						}
-					} else if (nextPocket == 7) {
+					} else if (nextPocket == 0) {
 						if (player == 2) {
 							gameBoard[nextPocket]++;
 						} else {
@@ -135,7 +115,7 @@ public class Game implements Serializable {
 						System.out.println("Final Pocket: " + nextPocket);
 //						System.out.println("Opposite Pocket: " + oppositePocket);
 					}
-					gameBoard[pNum] = gameBoard[pNum] - 1;
+					gameBoard[pNum]--;
 					nextPocket = nextPocket(nextPocket);
 					numStones--;
 				}
@@ -175,7 +155,7 @@ public class Game implements Serializable {
 	 */
 	private int nextPlayer(int player, int nextPocket) {
 		// TODO: Fix! - If the last stone in a player's move lands in their own Kallah, the player gets to move again. 
-		if ((player == 1 && nextPocket == 0) || (player == 2 && nextPocket == 7)) {
+		if ((player == 1 && nextPocket == 7) || (player == 2 && nextPocket == 0)) {
 			return player;
 		} else {
 			return player == 1 ? 2 : 1;
@@ -224,7 +204,20 @@ public class Game implements Serializable {
 		for (int i = 8; i < 14; i++) {
 			p2stones += gameBoard[i];
 		}
-		return p1stones == 0 || p2stones == 0 ? true : false;
+		if (p1stones == 0) {
+			for (int i = 8; i < 13; i++) {
+				gameBoard[0] += gameBoard[i];
+				gameBoard[i] = 0;
+			}
+			return true;
+		} else if (p2stones == 0) {
+			for (int i = 1; i < 7; i++) {
+				gameBoard[7] += gameBoard[i];
+				gameBoard[i] = 0;
+			}
+			return true;
+		}
+		return false;
 	}
 
 }
