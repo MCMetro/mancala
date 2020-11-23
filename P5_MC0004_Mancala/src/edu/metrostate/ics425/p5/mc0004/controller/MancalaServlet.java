@@ -32,12 +32,13 @@ public class MancalaServlet extends HttpServlet {
 		var game = (Game) request.getSession(true).getAttribute("game");
 		var pNum = request.getParameter("pNum");
 		var newGame = request.getParameter("newGame");
+		var numStones = request.getParameter("stoneSelection");
 		
 		// 2. Validate the move
 		
 		// 3. "Do it" Get the game 
 		if (newGame != null) {
-			game.createGameBoard();
+			game.createGameBoard(Integer.parseInt(numStones));
 		} else {
 			game.setMove(Integer.parseInt(pNum));
 		}

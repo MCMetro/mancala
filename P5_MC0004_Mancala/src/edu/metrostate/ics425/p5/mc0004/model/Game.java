@@ -20,11 +20,10 @@ public class Game implements Serializable {
 
 	private static final int NUM_POCKETS = 14;
 	private int turn;
-	static int startingStones = 4;
+//	static int startingStones = 4;
 	private static int[] gameBoard;
 	private int player = 1;
 	private int winner = 0;
-	
 
 	public int getWinner() {
 		return winner;
@@ -34,8 +33,8 @@ public class Game implements Serializable {
 		this.winner = winner;
 	}
 
-	public void createGameBoard() {
-		
+	public void createGameBoard(int numStones) {
+
 		// This is an attempt I made at making the game board just a simple int array.
 		// Initialization of this on line 21
 
@@ -44,11 +43,12 @@ public class Game implements Serializable {
 			if (i == 0 || i == 7) {
 				gameBoard[i] = 0;
 			} else {
-				gameBoard[i] = startingStones;
+				gameBoard[i] = numStones;
 			}
 
 		}
 		player = 1;
+		setWinner(0);
 	}
 
 	public int[] getGameBoard() {
@@ -66,6 +66,63 @@ public class Game implements Serializable {
 	public void setMove(int pNum) {
 		System.out.println(gameWon());
 		System.out.println("value of w: " + winner);
+		if (isValid(player, pNum) == false) {
+
+		} else {
+			var numStones = gameBoard[pNum];
+			var nextPocket = nextPocket(pNum);
+			while (numStones > 0) {
+				System.out.println("stones left: " + gameBoard[pNum]);
+				System.out.println("next pocket: " + nextPocket);
+				if (nextPocket == 7) {
+					if (player == 1) {
+						gameBoard[nextPocket]++;
+					} else {
+						nextPocket = nextPocket(nextPocket);
+						gameBoard[nextPocket]++;
+					}
+				} else if (nextPocket == 0) {
+					if (player == 2) {
+						gameBoard[nextPocket]++;
+					} else {
+						nextPocket = nextPocket(nextPocket);
+						gameBoard[nextPocket]++;
+					}
+				} else {
+					gameBoard[nextPocket]++;
+				}
+				// if the last stone falls in an empty pocket on your side, add the stones in
+				// that pocket to the final pocket.
+				// Add a check to ensure the last stone was on the proper side.
+				if (numStones == 1) {
+					int oppositePocket = getOppositePocket(nextPocket);
+					if (gameBoard[nextPocket] == 1) {
+						if ((player == 1 && nextPocket > 0 && nextPocket < 7)
+								|| (player == 2 && nextPocket > 7 && nextPocket < 14)) {
+							if (player == 1) {
+								gameBoard[7] += (gameBoard[oppositePocket] + 1);
+							} else if (player == 2) {
+								gameBoard[0] += (gameBoard[oppositePocket] + 1);
+							}
+//							gameBoard[nextPocket] = gameBoard[nextPocket] + gameBoard[oppositePocket];
+							gameBoard[oppositePocket] = 0;
+							gameBoard[nextPocket] = 0;
+							
+						}
+					}
+//						System.out.println("Final Pocket Count: " + gameBoard[nextPocket]);
+					System.out.println("Final Pocket: " + nextPocket);
+//						System.out.println("Opposite Pocket: " + oppositePocket);
+				}
+				gameBoard[pNum]--;
+				nextPocket = nextPocket(nextPocket);
+				numStones--;
+			}
+
+			player = nextPlayer(player, nextPocket - 1);
+
+		}
+		System.out.println("Current Player: " + player);
 		if (gameWon() == true) {
 			System.out.println("Begin gameWon If Statement...");
 			if (gameBoard[0] > gameBoard[7]) {
@@ -73,62 +130,7 @@ public class Game implements Serializable {
 			} else {
 				setWinner(1);
 			}
-		} else {
-			if (isValid(player, pNum) == false) {
-
-			} else {
-				var numStones = gameBoard[pNum];
-				var nextPocket = nextPocket(pNum);
-				while (numStones > 0) {
-					System.out.println("stones left: " + gameBoard[pNum]);
-					System.out.println("next pocket: " + nextPocket);
-					if (nextPocket == 7) {
-						if (player == 1) {
-							gameBoard[nextPocket]++;
-						} else {
-							nextPocket = nextPocket(nextPocket);
-							gameBoard[nextPocket]++;
-						}
-					} else if (nextPocket == 0) {
-						if (player == 2) {
-							gameBoard[nextPocket]++;
-						} else {
-							nextPocket = nextPocket(nextPocket);
-							gameBoard[nextPocket]++;
-						}
-					} else {
-						gameBoard[nextPocket]++;
-					}
-					// if the last stone falls in an empty pocket on your side, add the stones in
-					// that pocket to the final pocket.
-					// Add a check to ensure the last stone was on the proper side.
-					if (numStones == 1) {
-						int oppositePocket = getOppositePocket(nextPocket);
-						if (gameBoard[nextPocket] == 1) {
-							if ((player == 1 && nextPocket > 0 && nextPocket < 7)
-									|| (player == 2 && nextPocket > 7 && nextPocket < 14)) {
-								gameBoard[nextPocket] = gameBoard[nextPocket] + gameBoard[oppositePocket];
-								gameBoard[oppositePocket] = 0;
-							}
-						}
-//						System.out.println("Final Pocket Count: " + gameBoard[nextPocket]);
-						System.out.println("Final Pocket: " + nextPocket);
-//						System.out.println("Opposite Pocket: " + oppositePocket);
-					}
-					gameBoard[pNum]--;
-					nextPocket = nextPocket(nextPocket);
-					numStones--;
-				}
-				System.out.println("setMove...");
-//				if (player == 1) {
-//					player = 2;
-//				} else {
-//					player = 1;
-//				}
-				player = nextPlayer(player, nextPocket);
-			}
 		}
-		System.out.println("Current Player: " + player);
 	}
 
 	/**
@@ -154,7 +156,8 @@ public class Game implements Serializable {
 	 * @return The next player
 	 */
 	private int nextPlayer(int player, int nextPocket) {
-		// TODO: Fix! - If the last stone in a player's move lands in their own Kallah, the player gets to move again. 
+		// TODO: Fix! - If the last stone in a player's move lands in their own Kallah,
+		// the player gets to move again.
 		if ((player == 1 && nextPocket == 7) || (player == 2 && nextPocket == 0)) {
 			return player;
 		} else {
@@ -167,12 +170,8 @@ public class Game implements Serializable {
 	 * @return The pocket exactly opposite the last pocket a stone was placed in
 	 */
 	private int getOppositePocket(int finalPocket) {
-		int oppositePocket = finalPocket;
-		for (int i = 7; i > 0; i--) {
-			System.out.println("current pocket: " + oppositePocket);
-			oppositePocket = nextPocket(oppositePocket);
-		}
-		return oppositePocket;
+
+		return gameBoard.length - finalPocket;
 	}
 
 	/**
