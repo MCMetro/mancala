@@ -20,19 +20,28 @@ public class Game implements Serializable {
 
 	private static final int NUM_POCKETS = 14;
 	private int turn;
-//	static int startingStones = 4;
 	private static int[] gameBoard;
 	private int player = 1;
 	private int winner = 0;
 
+	/**
+	 * @return The winner of the current game.
+	 */
 	public int getWinner() {
 		return winner;
 	}
 
+	/**
+	 * @param winner
+	 */
 	public void setWinner(int winner) {
 		this.winner = winner;
 	}
 
+	/**
+	 * @param numStones
+	 * creates the game board
+	 */
 	public void createGameBoard(int numStones) {
 
 		// This is an attempt I made at making the game board just a simple int array.
@@ -51,29 +60,38 @@ public class Game implements Serializable {
 		setWinner(0);
 	}
 
+	/**
+	 * @return The gameboard.
+	 */
 	public int[] getGameBoard() {
 		return gameBoard;
 	}
 
+	/**
+	 * @return the current turn
+	 *TODO: add a turn counter to the jsp.
+	 *THIS DOES NOT WORK YET.
+	 */
 	public int getTurn() {
 		return turn;
 	}
 
+	/**
+	 * @param turn
+	 * TODO: add a turn counter to the jsp. 
+	 * THIS DOES NOT WORK YET.
+	 */
 	public void setTurn(int turn) {
 		this.turn = turn;
 	}
 
 	public void setMove(int pNum) {
-		System.out.println(gameWon());
-		System.out.println("value of w: " + winner);
 		if (isValid(player, pNum) == false) {
 
 		} else {
 			var numStones = gameBoard[pNum];
 			var nextPocket = nextPocket(pNum);
 			while (numStones > 0) {
-				System.out.println("stones left: " + gameBoard[pNum]);
-				System.out.println("next pocket: " + nextPocket);
 				if (nextPocket == 7) {
 					if (player == 1) {
 						gameBoard[nextPocket]++;
@@ -104,15 +122,11 @@ public class Game implements Serializable {
 							} else if (player == 2) {
 								gameBoard[0] += (gameBoard[oppositePocket] + 1);
 							}
-//							gameBoard[nextPocket] = gameBoard[nextPocket] + gameBoard[oppositePocket];
 							gameBoard[oppositePocket] = 0;
 							gameBoard[nextPocket] = 0;
 							
 						}
 					}
-//						System.out.println("Final Pocket Count: " + gameBoard[nextPocket]);
-					System.out.println("Final Pocket: " + nextPocket);
-//						System.out.println("Opposite Pocket: " + oppositePocket);
 				}
 				gameBoard[pNum]--;
 				nextPocket = nextPocket(nextPocket);
@@ -122,9 +136,7 @@ public class Game implements Serializable {
 			player = nextPlayer(player, nextPocket - 1);
 
 		}
-		System.out.println("Current Player: " + player);
 		if (gameWon() == true) {
-			System.out.println("Begin gameWon If Statement...");
 			if (gameBoard[0] > gameBoard[7]) {
 				setWinner(2);
 			} else {
@@ -136,7 +148,7 @@ public class Game implements Serializable {
 	/**
 	 * @param player
 	 * @param pocket
-	 * @return boolean if the move is valid or not.
+	 * @return
 	 */
 	private boolean isValid(int player, int pocket) {
 		boolean valid = false;
